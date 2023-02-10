@@ -23,6 +23,11 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
 
     // ルータ
     const router = useRouter()
+    const [basePass, setBasePass] = useState<string>()
+
+    useEffect(() => {
+        setBasePass(router.basePath)
+    }, [router])
 
     // VRMの初期化
     useEffect(() => {
@@ -34,11 +39,11 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
         if (!vrm) return 
         
         const loader = new FBXLoader()
-        loader.load(`${router.basePath}/assets/Happy Idle.fbx`, 
+        loader.load(`${basePass}/assets/Happy Idle.fbx`, 
                     (fbx) => { setIdol(convertMixamoTracks('idol', fbx, vrm)) })
-        loader.load(`${router.basePath}/assets/Walking.fbx`,
+        loader.load(`${basePass}/assets/Walking.fbx`,
                     (fbx) => { setWalk(convertMixamoTracks('walk', fbx, vrm)) })
-    }, [vrm])
+    }, [vrm, basePass])
 
     // プレイヤーがエリア外に出たら遷移
     const playerFrameEvent = useCallback((player: VRM) => {
