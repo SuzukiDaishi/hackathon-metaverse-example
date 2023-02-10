@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/router'
 import { Canvas, ThreeElements } from '@react-three/fiber'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { VRM } from '@pixiv/three-vrm'
@@ -20,6 +21,9 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
     const [idol, setIdol] = useState<THREE.AnimationClip>()
     const [walk, setWalk] = useState<THREE.AnimationClip>()
 
+    // ルータ
+    const router = useRouter()
+
     // VRMの初期化
     useEffect(() => {
         setVrm(props.vrm)
@@ -28,10 +32,11 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
     // アニメーションの初期化
     useEffect(() => {
         if (!vrm) return 
+        
         const loader = new FBXLoader()
-        loader.load('/assets/Happy Idle.fbx', 
+        loader.load(`${router.basePath}/assets/Happy Idle.fbx`, 
                     (fbx) => { setIdol(convertMixamoTracks('idol', fbx, vrm)) })
-        loader.load('/assets/Walking.fbx',
+        loader.load(`${router.basePath}/assets/Walking.fbx`,
                     (fbx) => { setWalk(convertMixamoTracks('walk', fbx, vrm)) })
     }, [vrm])
 
