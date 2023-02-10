@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/docs',
+  
+  basePath: '/hackathon-metaverse-example',
   reactStrictMode: true,
 }
 
