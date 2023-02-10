@@ -21,14 +21,6 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
     const [idol, setIdol] = useState<THREE.AnimationClip>()
     const [walk, setWalk] = useState<THREE.AnimationClip>()
 
-    // ルータ
-    const router = useRouter()
-    const [basePass, setBasePass] = useState<string>()
-
-    useEffect(() => {
-        setBasePass(router.basePath)
-    }, [router])
-
     // VRMの初期化
     useEffect(() => {
         setVrm(props.vrm)
@@ -39,11 +31,11 @@ export const StageComponent: React.FC<{ vrm: VRM }> = (props: { vrm: VRM }) => {
         if (!vrm) return 
         
         const loader = new FBXLoader()
-        loader.load(`${basePass}/assets/Happy Idle.fbx`, 
+        loader.load(`/assets/Happy Idle.fbx`, 
                     (fbx) => { setIdol(convertMixamoTracks('idol', fbx, vrm)) })
-        loader.load(`${basePass}/assets/Walking.fbx`,
+        loader.load(`/assets/Walking.fbx`,
                     (fbx) => { setWalk(convertMixamoTracks('walk', fbx, vrm)) })
-    }, [vrm, basePass])
+    }, [vrm])
 
     // プレイヤーがエリア外に出たら遷移
     const playerFrameEvent = useCallback((player: VRM) => {
