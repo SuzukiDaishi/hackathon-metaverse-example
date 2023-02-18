@@ -49,7 +49,7 @@ export const getBalanceOf =async (gas:number, api:ApiPromise, actingAddress:stri
   const { gasConsumed, result, output } = await contract.query["psp22::balanceOf"](
     actingAddress,
     { gasLimit: -1 },
-    "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+    actingAddress
   );
   if (output !== undefined && output !== null) {
     return output.toHuman()?.toString() ?? ""
@@ -58,14 +58,14 @@ export const getBalanceOf =async (gas:number, api:ApiPromise, actingAddress:stri
   }
 }
 
-export const sendCoinTo =async (gas:number, api:ApiPromise, actingAddress:string, toAddress:string, sendCoin:string) => {
+export const sendCoinTo =async (gas:number, api:ApiPromise, actingAddress:string, toAddress:string, sendCoin:number) => {
   const contract = new ContractPromise(api, abi, process.env.NEXT_PUBLIC_COIN_CONTRACT_ADDRESS || "")
   console.log(gas)
   console.log(api)
   console.log(actingAddress)
   console.log(toAddress)
   console.log(sendCoin)
-  await contract.query["psp22::transfer"](
+  const { gasConsumed, result, output } = await contract.query["psp22::transfer"](
     actingAddress,
     { gasLimit: gas },
     actingAddress,
