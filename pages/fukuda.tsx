@@ -1,13 +1,47 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import { anyFunc } from '@/libs/FukudaLibs'
+import { getApi, getAccounts, getTotalSupply, getBalanceOf, sendCoinTo } from '@/libs/FukudaLibs'
+import { ApiPromise } from '@polkadot/api';
 
 export default function Transition() {
+  const [totalSupply, setTotalSupply] = useState<any>();
+  const [api, setApi] = useState<any>();
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [actingAddress, setActingAddress] = useState("");
+
+  const [totalSupplyCoin, setTotalSupplyCoin] = useState<string>();
+  const [ownCoin, setOwnCoin] = useState<string>();
+
 
   useEffect(() => {
-    console.log(anyFunc())
+    // setCoinContract(getCoinContract())
+    // setAccounts(getAccounts())
   })
+
+  const initialize = async () => {
+    // walletに紐づくアカウント一覧を取得
+    setAccounts(await getAccounts())
+    // coinを取り扱うスマートコントラクトを取得
+    setApi(await getApi())
+  }
+
+  const getTotalSupplyCoin = async () => {
+    console.log(actingAddress)
+    setTotalSupplyCoin(await getTotalSupply(1, actingAddress, api))
+  }
+
+  const getBalanceOfCoin =async () => {
+    setOwnCoin(await getBalanceOf(1, api, actingAddress))
+  }
+
+  const sendCoin =async () => {
+    const sendCoinNum = "100"
+    const gas = 18750
+    const toAddress = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+    sendCoinTo(gas, api,  actingAddress, toAddress, sendCoinNum)
+  }
+
 
   return (
     <>
@@ -19,6 +53,56 @@ export default function Transition() {
       </Head>
       <main>
         <h1>Fukuda</h1>
+        <h2>{actingAddress}</h2>
+        <button
+          className="bg-green-900 hover:bg-green-800 text-white rounded px-4 py-2"
+          onClick={initialize}
+        >
+          initialize(click once)
+        </button>
+        <select
+          className="p-3 m-3 border-2 border-green-500"
+          onChange={(event) => {
+            console.log(event);
+            setActingAddress(event.target.value);
+          }}
+        >
+          {accounts.map((a) => (
+            <option key={a.address} value={a.address}>
+              {a.address} [{a.meta.name}]
+            </option>
+          ))}
+        </select>
+        <br></br>
+        <br></br>
+        <h2>Total supply coin</h2>
+        <button
+          className="bg-green-900 hover:bg-green-800 text-white rounded px-4 py-2"
+          onClick={getTotalSupplyCoin}
+        >
+          get total supply coin
+        </button>
+        <div className="p-3 m-3">Block: {totalSupplyCoin}</div>
+        <br></br>
+        <br></br>
+        <h2>own coin</h2>
+        <button
+          className="bg-green-900 hover:bg-green-800 text-white rounded px-4 py-2"
+          onClick={getBalanceOfCoin}
+        >
+          get own coin
+        </button>
+        <div className="p-3 m-3">Block: {ownCoin}</div>
+        <br></br>
+        <br></br>
+        <h2>send coin</h2>
+        <button
+          className="bg-green-900 hover:bg-green-800 text-white rounded px-4 py-2"
+          onClick={sendCoin}
+        >
+          send coin coin
+        </button>
+        <div className="p-3 m-3">Block: {ownCoin}</div>
       </main>
     </>
   )
