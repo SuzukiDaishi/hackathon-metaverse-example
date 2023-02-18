@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
-import { getApi, getAccounts, getTotalSupply, getBalanceOf, sendCoinTo } from '@/libs/FukudaLibs'
+import { getApi, getAccounts, getTotalSupply, getBalanceOf, sendCoinTo, setKeyring } from '@/libs/FukudaLibs'
 import { ApiPromise } from '@polkadot/api';
 
 export default function Transition() {
@@ -9,6 +9,7 @@ export default function Transition() {
   const [api, setApi] = useState<any>();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [actingAddress, setActingAddress] = useState("");
+  const [mnemonic, setMnemonic] = useState("");
 
   const [totalSupplyCoin, setTotalSupplyCoin] = useState<string>();
   const [ownCoin, setOwnCoin] = useState<string>();
@@ -24,6 +25,8 @@ export default function Transition() {
     setAccounts(await getAccounts())
     // coinを取り扱うスマートコントラクトを取得
     setApi(await getApi())
+
+    setKeyring(mnemonic)
   }
 
   const getTotalSupplyCoin = async () => {
@@ -36,11 +39,12 @@ export default function Transition() {
   }
 
   const sendCoin =async () => {
-    const sendCoinNum = "100"
+    const sendCoinNum = 100
     const gas = 18750
     const toAddress = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
     sendCoinTo(gas, api,  actingAddress, toAddress, sendCoinNum)
   }
+
 
 
   return (
@@ -54,6 +58,14 @@ export default function Transition() {
       <main>
         <h1>Fukuda</h1>
         <h2>{actingAddress}</h2>
+        <input
+          type="text"
+          id="message"
+          name="message"
+          onChange={(event)=>{
+            setMnemonic(event.target.value)
+          }}
+        />
         <button
           className="bg-green-900 hover:bg-green-800 text-white rounded px-4 py-2"
           onClick={initialize}
